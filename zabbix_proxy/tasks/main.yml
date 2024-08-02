@@ -1,0 +1,76 @@
+---
+- name: become_method sudo  
+  block:
+   - name: install packages
+     apt:
+       name:
+         - gnupg2
+         - wget
+         - vim
+         - python3-psycopg2
+         - acl
+       update_cache: yes
+
+   - name: add postgresql repository
+     shell: sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+
+   - name: download repository key
+     shell: wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+   - name: update
+     apt:
+       update_cache: yes
+
+   - name: install postgresql 16
+     apt:
+       name:
+         - postgresql-16
+         - postgresql-contrib
+
+   - name: start service postgresql
+     service:
+       name: postgresql
+       enabled: yes
+
+   - name: install zabbix-proxy
+     apt:
+       name:
+         - zabbix-proxy-pgsql
+         - zabbix-sql-scripts
+  become: true
+  become_method: sudo
+
+- name: become user postgres
+  block:
+    - name: create user
+      community.postgresql.postgresql_user:
+        name: zabbix
+        password: zabbix
+
+    - name: create db
+      community.postgresql.postgresql_db:
+        name: zabbix-proxy
+        owner: zabbix
+  become: true
+  become_user: postgres
+
+- name: become method sudo
+  block: 
+    - name: inport initial schema
+      shell: cat /usr/share/zabbix-sql-scripts/postgresql/proxy.sql | sudo -u zabbix psql zabbix-proxy
+
+    - name: copy config
+      copy:
+        src: zabbix_proxy.conf
+        dest: /etc/zabbix/zabbix_proxy.conf
+
+    - name: restart zabbix_proxy
+      service:
+        name: zabbix-proxy
+        state: restarted
+        enabled: true
+      notify: 
+       - get status zabbix_proxy
+       - status output zabbix_proxy
+  become: true
+  become_method: sudo      

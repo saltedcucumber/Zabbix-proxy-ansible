@@ -1,0 +1,10 @@
+---
+
+- name: Install and configere zabbix
+  hosts: test 
+  roles:
+    - zabbix_repository
+    - zabbix_proxy
+#    - zabbix_agent
+    - zabbix_agent2
+    - packages

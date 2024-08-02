@@ -1,0 +1,12 @@
+---
+
+- name: get status haproxy
+  systemd:
+      name: "haproxy"
+  register: haproxy
+- name: status output haproxy
+  debug:  
+    msg: 
+          - "Haproxy version: {{ ansible_facts.packages['haproxy'][0].version }}"
+          - "Haproxy status: {{haproxy.status.ActiveState}}"
+          - "dnsmasq version: {{ ansible_facts.packages['dnsmasq'][0].version }}"

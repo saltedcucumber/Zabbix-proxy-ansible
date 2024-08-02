@@ -1,0 +1,22 @@
+---
+- name: become_method sudo
+  block:
+    - name: install zabbix-agent2
+      apt:
+        name: 
+          - zabbix-agent2
+          - zabbix-agent2-plugin-*
+    - name: copy config
+      copy:
+        src: zabbix_agent2.conf
+        dest: /etc/zabbix/zabbix_agentd2.conf
+    - name: restart zabbix_agent2
+      service:
+        name: zabbix-agent2
+        state: restarted
+        enabled: true
+      notify:
+        - get status zabbix-agent2
+        - status output zabbix-agent2
+  become: true
+  become_method: sudo       

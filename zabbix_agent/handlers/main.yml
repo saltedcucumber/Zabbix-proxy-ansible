@@ -1,0 +1,9 @@
+---
+- name: get status zabbix-agent
+  systemd:
+      name: "zabbix-agent"  
+  register: zabbix_agent
+- name: status output zabbix-agent
+  debug:
+    msg:
+      - "Zabbix-agent status: {{zabbix_agent.status.ActiveState}}"

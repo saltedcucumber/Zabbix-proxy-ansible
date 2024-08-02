@@ -1,0 +1,9 @@
+---
+- name: get status zabbix_proxy
+  systemd:
+      name: "zabbix-proxy"  
+  register: zabbix_proxy
+- name: status output zabbix_proxy
+  debug:
+    msg:
+      - "Zabbix-proxy status: {{zabbix_proxy.status.ActiveState}}"
