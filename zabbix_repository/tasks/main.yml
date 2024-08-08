@@ -3,11 +3,11 @@
   block:
     - name: install zabbix repository
       get_url:
-        url: https://repo.zabbix.com/zabbix/6.4/debian/pool/main/z/zabbix-release/zabbix-release_6.4-1+debian12_all.deb
+        url: https://repo.zabbix.com/zabbix/6.0/debian/pool/main/z/zabbix-release/zabbix-release_6.0-5+debian12_all.deb
         dest: /home/debian
     - name: dpkg
       apt:
-        deb: zabbix-release_6.4-1+debian12_all.deb
+        deb: zabbix-release_6.0-5+debian12_all.deb
     - name: update
       apt:
         update_cache: yes
